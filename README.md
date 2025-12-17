@@ -1,8 +1,9 @@
 # TV Floating Widget Project
 
-### 🚨 IN WHICH PATH? (IMPORTANT)
+### 🚨 CI BUILD FIXED (IMPORTANT)
 
+This project includes a proxy `gradlew` script to support standard GitHub Actions. 
+
+**HOW TO UPLOAD:**
 Upload the files to the **ROOT** of your repository. 
-
-**DO NOT** create a folder named "TVFloatingWidget" or "project" inside the repo.
-The file `build.gradle` must be visible immediately when you open your repository page.
+The file `build.gradle` and `gradlew` must be visible immediately when you open your repository page.
