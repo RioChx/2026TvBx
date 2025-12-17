@@ -163,7 +163,6 @@ class FloatingWidgetService : Service() {
     @SuppressLint("ClickableViewAccessibility")
     private fun setupUI() {
         try {
-            // ... (Previous bindings)
             val btnClose = floatingView.findViewById<ImageButton>(R.id.btn_close)
             val btnSettings = floatingView.findViewById<ImageButton>(R.id.btn_settings)
             val btnMove = floatingView.findViewById<ImageButton>(R.id.btn_move)
@@ -211,7 +210,7 @@ class FloatingWidgetService : Service() {
                 clockContainer.addView(tick, 0)
             }
 
-            // --- SPINNERS SETUP (Font/Effect) ---
+            // --- SPINNERS SETUP ---
             val fontAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, arrayOf("Modern", "Digital/LED", "Retro", "Code"))
             spinnerFont.adapter = fontAdapter
             spinnerFont.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -222,9 +221,7 @@ class FloatingWidgetService : Service() {
                         2 -> bannerTextView.typeface = Typeface.SERIF
                         3 -> bannerTextView.typeface = Typeface.MONOSPACE
                     }
-                    if(pos == 1) { // LED simulation
-                        bannerTextView.setTypeface(Typeface.MONOSPACE, Typeface.BOLD)
-                    }
+                    if(pos == 1) bannerTextView.setTypeface(Typeface.MONOSPACE, Typeface.BOLD)
                 }
                 override fun onNothingSelected(p: AdapterView<*>?) {}
             }
@@ -233,21 +230,18 @@ class FloatingWidgetService : Service() {
             spinnerEffect.adapter = effectAdapter
             spinnerEffect.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p: AdapterView<*>?, v: View?, pos: Int, id: Long) {
-                     // Reset effects
                      pulseAnimator?.cancel()
                      bannerTextView.alpha = 1f
                      bannerTextView.paint.shader = null
-                     
                      when (pos) {
-                         0 -> {} // Marquee is default behaviour of TextView
-                         1 -> { // Pulse
+                         1 -> {
                              pulseAnimator = ObjectAnimator.ofFloat(bannerTextView, "alpha", 1f, 0.3f, 1f).apply {
                                  duration = 1500
                                  repeatCount = ValueAnimator.INFINITE
                                  start()
                              }
                          }
-                         2 -> { // Rainbow
+                         2 -> {
                             val width = bannerTextView.paint.measureText(bannerTextView.text.toString())
                             if (width > 0) {
                                 val shader = LinearGradient(0f, 0f, width, 0f, 
@@ -261,11 +255,10 @@ class FloatingWidgetService : Service() {
                 override fun onNothingSelected(p: AdapterView<*>?) {}
             }
             
-            // --- Text Banner Logic ---
             toggleTextSwitch.setOnCheckedChangeListener { _, isChecked ->
                 isTextVisible = isChecked
                 bannerTextView.visibility = if (isChecked) View.VISIBLE else View.GONE
-                if (isChecked) bannerTextView.isSelected = true // Trigger marquee
+                if (isChecked) bannerTextView.isSelected = true
             }
             
             textInput.setOnKeyListener { _, _, event ->
@@ -275,16 +268,12 @@ class FloatingWidgetService : Service() {
                 }
                 false
             }
-            // Also update on focus lost
-            textInput.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) bannerTextView.text = textInput.text.toString()
-            }
 
-            // --- Button Listeners ---
             floatingView.findViewById<ImageButton>(R.id.btn_home).setOnClickListener {
-                val homeIntent = Intent(Intent.ACTION_MAIN)
-                homeIntent.addCategory(Intent.CATEGORY_HOME)
-                homeIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                val homeIntent = Intent(Intent.ACTION_MAIN).apply {
+                    addCategory(Intent.CATEGORY_HOME)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
                 startActivity(homeIntent)
             }
             floatingView.findViewById<ImageButton>(R.id.btn_volume).setOnClickListener {
@@ -297,20 +286,17 @@ class FloatingWidgetService : Service() {
             }
             
             btnClose.setOnClickListener { stopSelf() }
-            
             btnSettings.setOnClickListener {
                 isSettingsOpen = !isSettingsOpen
-                // When opening settings, we must make window focusable to allow text input
-                if (isSettingsOpen) {
-                    params.flags = params.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv()
+                params.flags = if (isSettingsOpen) {
+                    params.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv()
                 } else {
-                    params.flags = params.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                    params.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 }
                 windowManager.updateViewLayout(floatingView, params)
                 settingsPanelContainer.visibility = if (isSettingsOpen) View.VISIBLE else View.GONE
             }
             
-            // --- Sliders ---
             seekOpacity.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(s: SeekBar?, p: Int, b: Boolean) {
                     params.alpha = (p + 20) / 100f 
@@ -328,15 +314,6 @@ class FloatingWidgetService : Service() {
                 }
                 override fun onStartTrackingTouch(s: SeekBar?) {}
                 override fun onStopTrackingTouch(s: SeekBar?) {}
-            })
-            
-            seekSpeed.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                 override fun onProgressChanged(s: SeekBar?, p: Int, b: Boolean) {
-                     val duration = (11000 - (p * 1000)).toLong() 
-                     if (borderAnimator != null) borderAnimator?.duration = duration
-                 }
-                 override fun onStartTrackingTouch(s: SeekBar?) {}
-                 override fun onStopTrackingTouch(s: SeekBar?) {}
             })
 
             val colorListener = object : SeekBar.OnSeekBarChangeListener {
@@ -358,15 +335,12 @@ class FloatingWidgetService : Service() {
 
             clockContainer.setOnClickListener { toggleMinimize() }
 
-            // --- DRAG LISTENER ---
             val touchListener = object : View.OnTouchListener {
                 private var initialX = 0
                 private var initialY = 0
                 private var initialTouchX = 0f
                 private var initialTouchY = 0f
                 private var isDragging = false
-                private var lastUpdateX = 0
-                private var lastUpdateY = 0
 
                 override fun onTouch(v: View, event: MotionEvent): Boolean {
                     when (event.action) {
@@ -376,8 +350,6 @@ class FloatingWidgetService : Service() {
                             initialTouchX = event.rawX
                             initialTouchY = event.rawY
                             isDragging = false
-                            lastUpdateX = initialX
-                            lastUpdateY = initialY
                             return true
                         }
                         MotionEvent.ACTION_MOVE -> {
@@ -387,14 +359,7 @@ class FloatingWidgetService : Service() {
                             if (isDragging) {
                                 params.x = initialX + dx
                                 params.y = initialY + dy
-                                // Throttle updates
-                                if (Math.abs(params.x - lastUpdateX) > 2 || Math.abs(params.y - lastUpdateY) > 2) {
-                                    try {
-                                        windowManager.updateViewLayout(floatingView, params)
-                                        lastUpdateX = params.x
-                                        lastUpdateY = params.y
-                                    } catch (e: Exception) {}
-                                }
+                                windowManager.updateViewLayout(floatingView, params)
                             }
                             return true
                         }
@@ -408,45 +373,17 @@ class FloatingWidgetService : Service() {
             }
             pillContainer.setOnTouchListener(touchListener)
             btnMove.setOnTouchListener(touchListener)
-            
-            // --- DETECT CLICK OUTSIDE TO CLOSE SETTINGS ---
-            floatingView.setOnTouchListener { _, event ->
-                 if (event.action == MotionEvent.ACTION_OUTSIDE) {
-                     if (isSettingsOpen) {
-                         isSettingsOpen = false
-                         // Revert focusable flag so touches pass through outside
-                         params.flags = params.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                         windowManager.updateViewLayout(floatingView, params)
-                         settingsPanelContainer.visibility = View.GONE
-                         return@setOnTouchListener true
-                     }
-                 }
-                 false
-            }
 
         } catch (e: Exception) { e.printStackTrace() }
     }
     
-    // ... (rest of service methods same as before) ...
-    
-    private fun showVolumeFeedback(increasing: Boolean) {
-        volumeHideHandler.removeCallbacks(volumeHideRunnable)
-        volumeBar.visibility = View.VISIBLE
-        volumeHideHandler.postDelayed(volumeHideRunnable, 2000)
-    }
-
     private fun toggleMinimize() {
         isMinimized = !isMinimized
         val overlayControls = floatingView.findViewById<LinearLayout>(R.id.overlay_controls)
         if (isMinimized) {
             dividerView.visibility = View.GONE
             buttonsContainer.visibility = View.GONE
-            if (isSettingsOpen) {
-                isSettingsOpen = false
-                params.flags = params.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                windowManager.updateViewLayout(floatingView, params)
-                settingsPanelContainer.visibility = View.GONE
-            }
+            settingsPanelContainer.visibility = View.GONE
             volumeBar.visibility = View.GONE
             overlayControls?.visibility = View.GONE
             bannerTextView.visibility = View.GONE 
@@ -461,11 +398,11 @@ class FloatingWidgetService : Service() {
     private fun setupRGBBorder() {
         val borderView = floatingView.findViewById<View>(R.id.rgb_border)
         val colors = intArrayOf(Color.RED, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.MAGENTA, Color.RED)
-        val gradient = GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors)
-        gradient.gradientType = GradientDrawable.SWEEP_GRADIENT
-        gradient.shape = GradientDrawable.OVAL
+        val gradient = GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors).apply {
+            gradientType = GradientDrawable.SWEEP_GRADIENT
+            shape = GradientDrawable.OVAL
+        }
         borderView.background = gradient
-
         borderAnimator = ObjectAnimator.ofFloat(borderView, "rotation", 0f, 360f).apply {
             duration = 6000 
             interpolator = LinearInterpolator() 
