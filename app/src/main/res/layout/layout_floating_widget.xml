@@ -1,99 +1,366 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/rounded_background_black"
-    android:padding="16dp">
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:animateLayoutChanges="true">
 
-    <!-- RGB Border Background -->
-    <View
-        android:id="@+id/rgb_border"
-        android:layout_width="126dp"
-        android:layout_height="126dp"
-        android:layout_centerVertical="true"
-        android:layout_alignStart="@id/clock_container"
-        android:background="@drawable/conic_gradient_circle" />
-
-    <!-- Clock Container (Touch Anchor) -->
     <FrameLayout
-        android:id="@+id/clock_container"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:background="@drawable/circle_black"
-        android:layout_centerVertical="true">
-        
-        <!-- Clock Face Center Dot -->
-        <View
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_gravity="center"
-            android:background="#FFD700"
-            android:elevation="10dp"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <!-- Hour Hand -->
-        <ImageView
-            android:id="@+id/hand_hour"
-            android:layout_width="6dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="60dp"
-            android:src="@drawable/hand_hour"
-            android:transformPivotX="3dp"
-            android:transformPivotY="30dp" />
+        <!-- Main Pill Container (Horizontal) -->
+        <LinearLayout
+            android:id="@+id/pill_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/rounded_bg"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingEnd="40dp"
+            android:animateLayoutChanges="true">
 
-        <!-- Minute Hand -->
-        <ImageView
-            android:id="@+id/hand_minute"
-            android:layout_width="4dp"
-            android:layout_height="45dp"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="60dp"
-            android:src="@drawable/hand_minute"
-            android:transformPivotX="2dp"
-            android:transformPivotY="45dp" />
+            <!-- Clock Wrapper -->
+            <FrameLayout
+                android:layout_width="118dp"
+                android:layout_height="118dp"
+                android:layout_gravity="center_vertical">
+                
+                <View
+                    android:id="@+id/rgb_border"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/conic_gradient"
+                    android:visibility="visible" />
+                
+                <FrameLayout
+                    android:id="@+id/clock_container"
+                    android:layout_width="112dp"
+                    android:layout_height="112dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_black">
 
-        <!-- Second Hand -->
-        <ImageView
-            android:id="@+id/hand_second"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="60dp"
-            android:src="@drawable/hand_second"
-            android:transformPivotX="1dp"
-            android:transformPivotY="50dp" />
-            
+                     <View
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:background="#FFD700"
+                        android:layout_gravity="center"/>
+
+                     <ImageView
+                        android:id="@+id/hand_hour"
+                        android:layout_width="8dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/hand_hour"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="14dp" 
+                        android:transformPivotY="28dp"
+                        android:transformPivotX="4dp"/>
+                     
+                     <ImageView
+                        android:id="@+id/hand_minute"
+                        android:layout_width="6dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/hand_minute"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="20dp"
+                        android:transformPivotY="40dp"
+                        android:transformPivotX="3dp"/>
+
+                     <ImageView
+                        android:id="@+id/hand_second"
+                        android:layout_width="2dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/hand_second"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="24dp"
+                        android:transformPivotY="48dp"
+                        android:transformPivotX="1dp"/>
+
+                </FrameLayout>
+            </FrameLayout>
+
+            <View
+                android:id="@+id/divider_view"
+                android:layout_width="3dp"
+                android:layout_height="64dp"
+                android:background="#00E5FF"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"/>
+
+            <LinearLayout
+                android:id="@+id/buttons_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btn_home"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_home"
+                    android:src="@drawable/ic_home"
+                    android:scaleType="centerInside"
+                    android:padding="20dp"
+                    android:layout_marginEnd="12dp"/>
+
+                <ImageButton
+                    android:id="@+id/btn_recent"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_recent"
+                    android:src="@drawable/ic_layers"
+                    android:scaleType="centerInside"
+                    android:padding="20dp"
+                    android:layout_marginEnd="12dp"/>
+
+                <ImageButton
+                    android:id="@+id/btn_volume"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_volume"
+                    android:src="@drawable/ic_volume"
+                    android:scaleType="centerInside"
+                    android:padding="20dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Overlay Controls -->
+        <LinearLayout
+            android:id="@+id/overlay_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp">
+
+            <ImageButton
+                android:id="@+id/btn_close"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/circle_btn"
+                android:backgroundTint="#20FF0000"
+                android:src="@drawable/ic_close"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                android:layout_marginBottom="8dp"/>
+
+            <ImageButton
+                android:id="@+id/btn_settings"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/circle_btn"
+                android:backgroundTint="#20FFFFFF"
+                android:src="@drawable/ic_settings"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                android:layout_marginBottom="8dp"/>
+
+            <ImageButton
+                android:id="@+id/btn_move"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@null"
+                android:src="@drawable/ic_move"
+                android:padding="4dp"
+                android:scaleType="fitCenter"/>
+
+        </LinearLayout>
+
     </FrameLayout>
-
-    <!-- Buttons -->
-    <LinearLayout
-        android:id="@+id/buttons_container"
+    
+    <!-- Text Banner (NEW) -->
+    <TextView
+        android:id="@+id/banner_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/clock_container"
-        android:layout_marginStart="20dp"
-        android:orientation="horizontal"
-        android:layout_centerVertical="true">
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_bg"
+        android:backgroundTint="#80000000"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:text="Welcome to TV Widget"
+        android:textColor="#00E5FF"
+        android:textSize="20sp"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:scrollHorizontally="true"
+        android:visibility="gone"/>
 
-        <View android:layout_width="3dp" android:layout_height="60dp" 
-              android:background="#00E5FF" android:layout_marginEnd="16dp"/>
+    <!-- Volume Bar -->
+    <ProgressBar
+        android:id="@+id/volume_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="160dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="8dp"
+        android:progressDrawable="@drawable/progress_bg"
+        android:max="100"
+        android:progress="50"
+        android:visibility="gone"/>
 
-        <ImageButton android:id="@+id/btn_home" android:src="@drawable/ic_home" 
-                     android:layout_width="60dp" android:layout_height="60dp"
-                     android:background="?attr/selectableItemBackgroundBorderless"/>
-                     
-        <ImageButton android:id="@+id/btn_recent" android:src="@drawable/ic_layers"
-                     android:layout_width="60dp" android:layout_height="60dp"
-                     android:background="?attr/selectableItemBackgroundBorderless"/>
-                     
-        <ImageButton android:id="@+id/btn_volume" android:src="@drawable/ic_volume"
-                     android:layout_width="60dp" android:layout_height="60dp"
-                     android:background="?attr/selectableItemBackgroundBorderless"/>
-    </LinearLayout>
-    
-    <ImageButton android:id="@+id/btn_close"
-        android:layout_width="30dp" android:layout_height="30dp"
-        android:layout_alignParentEnd="true" android:layout_alignParentTop="true"
-        android:src="@drawable/ic_close"
-        android:background="?attr/selectableItemBackgroundBorderless" />
-</RelativeLayout>
+    <!-- Settings Panel - WRAPPED IN SCROLLVIEW -->
+    <FrameLayout
+        android:id="@+id/settings_panel_container"
+        android:layout_width="320dp"
+        android:layout_height="350dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/settings_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:id="@+id/settings_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:text="Scale"
+                    android:textColor="#AAAAAA"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <SeekBar
+                    android:id="@+id/seek_scale"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="50"
+                    android:layout_marginBottom="12dp"/>
+
+                <!-- New Text Banner Controls -->
+                <View 
+                    android:layout_width="match_parent" 
+                    android:layout_height="1dp" 
+                    android:background="#33FFFFFF" 
+                    android:layout_marginBottom="12dp"/>
+                    
+                <LinearLayout 
+                    android:orientation="horizontal" 
+                    android:gravity="center_vertical" 
+                    android:layout_width="match_parent" 
+                    android:layout_height="wrap_content" 
+                    android:layout_marginBottom="8dp">
+                    
+                    <TextView
+                        android:text="Show Text Banner"
+                        android:textColor="#FFFFFF"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
+                        
+                    <Switch
+                        android:id="@+id/switch_show_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/input_banner_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Type banner text here"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#666666"
+                    android:backgroundTint="#444444"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"
+                    android:layout_marginBottom="12dp"/>
+                    
+                <!-- Font & Effect Spinners -->
+                <LinearLayout 
+                    android:orientation="horizontal" 
+                    android:layout_width="match_parent" 
+                    android:layout_height="wrap_content" 
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center_vertical">
+                    
+                    <LinearLayout android:orientation="vertical" android:layout_weight="1" android:layout_width="0dp" android:layout_marginEnd="8dp">
+                        <TextView android:text="Font" android:textSize="10sp" android:textColor="#AAAAAA"/>
+                        <Spinner android:id="@+id/spinner_font" android:layout_width="match_parent" android:layout_height="40dp" android:backgroundTint="#AAAAAA"/>
+                    </LinearLayout>
+                    
+                    <LinearLayout android:orientation="vertical" android:layout_weight="1" android:layout_width="0dp">
+                        <TextView android:text="Effect" android:textSize="10sp" android:textColor="#AAAAAA"/>
+                        <Spinner android:id="@+id/spinner_effect" android:layout_width="match_parent" android:layout_height="40dp" android:backgroundTint="#AAAAAA"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View 
+                    android:layout_width="match_parent" 
+                    android:layout_height="1dp" 
+                    android:background="#33FFFFFF" 
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:text="Opacity"
+                    android:textColor="#AAAAAA"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <SeekBar
+                    android:id="@+id/seek_opacity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="80"
+                    android:progress="75"
+                    android:layout_marginBottom="8dp"/>
+                    
+                <TextView
+                    android:text="RGB Speed"
+                    android:textColor="#AAAAAA"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <SeekBar
+                    android:id="@+id/seek_speed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="10"
+                    android:progress="5"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:text="Color Theme (RGB)"
+                    android:textColor="#AAAAAA"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"/>
+                    
+                <LinearLayout android:orientation="horizontal" android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingBottom="4dp">
+                    <TextView android:text="R" android:textColor="#FF5555" android:textSize="10sp" android:layout_width="20dp" android:layout_height="wrap_content"/>
+                    <SeekBar android:id="@+id/seek_red" android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content" android:max="255" android:progress="0"/>
+                </LinearLayout>
+                <LinearLayout android:orientation="horizontal" android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingBottom="4dp">
+                    <TextView android:text="G" android:textColor="#55FF55" android:textSize="10sp" android:layout_width="20dp" android:layout_height="wrap_content"/>
+                    <SeekBar android:id="@+id/seek_green" android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content" android:max="255" android:progress="229"/>
+                </LinearLayout>
+                <LinearLayout android:orientation="horizontal" android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingBottom="4dp">
+                    <TextView android:text="B" android:textColor="#5555FF" android:textSize="10sp" android:layout_width="20dp" android:layout_height="wrap_content"/>
+                    <SeekBar android:id="@+id/seek_blue" android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content" android:max="255" android:progress="255"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
+</LinearLayout>
