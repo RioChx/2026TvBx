@@ -1,10 +1,9 @@
-# TV Floating Widget Project
+# TV Floating Widget Project v2.3
 
-### 🚨 FIXED ANDROIDX & GRADLE ERRORS
-
-1. **AndroidX Fix**: Added `gradle.properties` with `android.useAndroidX=true`.
-2. **Gradle Version Fix**: Updated CI workflow to explicitly use **Gradle 8.4** (Gradle 9.x is currently incompatible with Android plugins).
+### 🚨 CI & COMPATIBILITY NOTES
+1. **Android 13/14**: Handled foreground service types and notification permissions.
+2. **Gradle**: Explicitly uses **Gradle 8.4** in GitHub Actions to avoid 9.x API breakage.
+3. **AndroidX**: Enabled in `gradle.properties`.
 
 **HOW TO UPLOAD:**
-Upload all files to the **ROOT** of your repository. 
-The files `build.gradle`, `gradle.properties`, and `gradlew` must be at the top level.
+Files must be in the **ROOT** of your repo (`build.gradle`, `gradle.properties`, `gradlew`).
