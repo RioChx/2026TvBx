@@ -3,7 +3,6 @@ package com.example.tvfloatingwidget
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.*
-import android.content.res.ColorStateList
 import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.media.AudioManager
@@ -50,8 +49,8 @@ class FloatingWidgetService : Service() {
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Dock Active")
-            .setSmallIcon(R.drawable.ic_launcher)
+            .setContentTitle("TV Dock is Active")
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .build()
         if (Build.VERSION.SDK_INT >= 34) {
             startForeground(1, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
@@ -78,14 +77,13 @@ class FloatingWidgetService : Service() {
 
         windowManager.addView(floatingView, params)
         
-        // Setup UI references
         hourHand = floatingView.findViewById(R.id.hand_hour)
         minuteHand = floatingView.findViewById(R.id.hand_minute)
         secondHand = floatingView.findViewById(R.id.hand_second)
         val clockContainer = floatingView.findViewById<FrameLayout>(R.id.clock_container)
         val density = resources.displayMetrics.density
 
-        // Artistic Clock Face: Add Numbers 1-12
+        // --- ADD HOUR NUMBERS (1-12) ---
         for (i in 1..12) {
             val tv = TextView(this).apply {
                 text = i.toString()
@@ -94,7 +92,8 @@ class FloatingWidgetService : Service() {
                 typeface = Typeface.DEFAULT_BOLD
                 gravity = Gravity.CENTER
             }
-            val lp = FrameLayout.LayoutParams((24 * density).toInt(), (24 * density).toInt(), Gravity.CENTER)
+            val size = (20 * density).toInt()
+            val lp = FrameLayout.LayoutParams(size, size, Gravity.CENTER)
             tv.layoutParams = lp
             val angle = Math.toRadians((i * 30 - 90).toDouble())
             val r = 38 * density
@@ -103,10 +102,10 @@ class FloatingWidgetService : Service() {
             clockContainer.addView(tv)
         }
 
-        // Add Minute Ticks
+        // --- ADD MINUTE TICKS ---
         for (i in 0 until 60) {
             val tick = View(this).apply {
-                setBackgroundColor(if (i % 5 == 0) Color.parseColor("#FFD700") else Color.parseColor("#80FFD700"))
+                setBackgroundColor(if (i % 5 == 0) Color.parseColor("#FFD700") else Color.parseColor("#40FFD700"))
             }
             val w = if (i % 5 == 0) 2 * density else 1 * density
             val h = if (i % 5 == 0) 5 * density else 2 * density
@@ -117,7 +116,7 @@ class FloatingWidgetService : Service() {
             clockContainer.addView(tick, 0)
         }
 
-        // Setup Dragging
+        // --- DRAG LOGIC ---
         floatingView.setOnTouchListener(object : View.OnTouchListener {
             private var initialX = 0; private var initialY = 0
             private var initialTouchX = 0f; private var initialTouchY = 0f
@@ -131,7 +130,7 @@ class FloatingWidgetService : Service() {
                     MotionEvent.ACTION_MOVE -> {
                         params.x = initialX + (event.rawX - initialTouchX).toInt()
                         params.y = initialY + (event.rawY - initialTouchY).toInt()
-                        windowManager.updateViewLayout(floatingView, params)
+                        try { windowManager.updateViewLayout(floatingView, params) } catch (e: Exception) {}
                         return true
                     }
                 }
@@ -139,7 +138,7 @@ class FloatingWidgetService : Service() {
             }
         })
 
-        // Setup RGB Border Animation
+        // --- RGB ANIMATION ---
         val border = floatingView.findViewById<View>(R.id.rgb_border)
         val colors = intArrayOf(Color.RED, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.MAGENTA, Color.RED)
         border.background = GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors).apply {
@@ -149,22 +148,27 @@ class FloatingWidgetService : Service() {
             duration = 6000; interpolator = LinearInterpolator(); repeatCount = ValueAnimator.INFINITE; start()
         }
 
-        // Button Actions
+        // --- BUTTON CLICKS ---
         floatingView.findViewById<View>(R.id.btn_home).setOnClickListener {
-            startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
         floatingView.findViewById<View>(R.id.btn_volume).setOnClickListener {
             audioManager.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI)
         }
         floatingView.findViewById<View>(R.id.btn_recent).setOnClickListener {
-            Executors.newSingleThreadExecutor().execute { try { Runtime.getRuntime().exec("input keyevent 187") } catch (e: Exception) {} }
+            Executors.newSingleThreadExecutor().execute { 
+                try { Runtime.getRuntime().exec("input keyevent 187") } catch (e: Exception) {
+                    Handler(Looper.getMainLooper()).post { Toast.makeText(applicationContext, "Accessibility needed for Recents", Toast.LENGTH_SHORT).show() }
+                }
+            }
         }
     }
 
     private fun updateClock() {
         val cal = Calendar.getInstance()
         secondHand.rotation = cal.get(Calendar.SECOND) * 6f
-        minuteHand.rotation = cal.get(Calendar.MINUTE) * 6f
+        minuteHand.rotation = cal.get(Calendar.MINUTE) * 6f + (cal.get(Calendar.SECOND) * 0.1f)
         hourHand.rotation = (cal.get(Calendar.HOUR) % 12) * 30f + (cal.get(Calendar.MINUTE) * 0.5f)
     }
 

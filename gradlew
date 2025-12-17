@@ -1,7 +1,3 @@
 #!/usr/bin/env sh
-# Proxy script to allow CI to run without the binary wrapper jar
-if [ -n "$GRADLE_HOME" ]; then
-    exec "$GRADLE_HOME/bin/gradle" "$@"
-else
-    exec gradle "$@"
-fi
+# Proxy script to force the CI-installed Gradle version
+exec gradle "$@"
