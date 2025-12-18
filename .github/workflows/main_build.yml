@@ -24,23 +24,31 @@ jobs:
       - name: Grant Execute Permission
         run: chmod +x gradlew
 
-      - name: Force Master Sync
+      - name: Force Master Sync & Fix Manifest
         run: |
-          # 1. Delete the duplicate ghost folder causing the 'R' errors
+          echo "Overriding errors for Android 13 Build..."
+          
+          # 1. FIX THE MANIFEST ERROR (Removes unsupported package attribute)
+          sed -i 's/package="com.example.tvfloatingwidget"//g' app/src/main/AndroidManifest.xml
+          
+          # 2. DELETE ghost folders causing 'R' errors
           rm -rf app/src/main/java/com/example/textstudiopro
           
-          # 2. Fix the AudioManager conflict (Cleans and re-adds correctly)
+          # 3. FIX tvfloatingwidget references
+          find app/src/main/java/com/example/tvfloatingwidget -name "*.kt" -exec sed -i 's/import com.example.*.R/import com.example.tvosmaster.R/g' {} +
+
+          # 4. CLEAN AudioManager conflicts in master folder
           find app/src/main/java/com/example/tvosmaster -name "*.kt" -exec sed -i '/import android.media.AudioManager/d' {} +
           find app/src/main/java/com/example/tvosmaster -name "*.kt" -exec sed -i '/package /a import android.media.AudioManager' {} +
           
-          # 3. Point all files to the Master 'R' reference
+          # 5. GLOBAL R-import override to tvosmaster
           find app/src/main/java -name "*.kt" -exec sed -i 's/import com.example.*.R/import com.example.tvosmaster.R/g' {} +
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: Upload APK Artifact
+      - name: Upload Android 13 APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-android-13-apk
+          name: my-app-android-13
           path: app/build/outputs/apk/debug/*.apk
