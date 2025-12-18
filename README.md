@@ -1,3 +1,3 @@
-# TV Floating Widget Source - Milestone 4 (v2.7 Fixed Ultra Stable)
+# TV Floating Widget Source - Milestone 5 (v2.8 Final Fixed)
 
-ULTRA STABLE: Restores minimize behavior, settings studio, and fixes all JVM-target build errors.
+ULTRA STABLE: Restores minimize/maximize logic, controls studio, and ensures compilation by providing correct layout IDs.

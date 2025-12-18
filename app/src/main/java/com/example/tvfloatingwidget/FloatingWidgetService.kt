@@ -7,10 +7,8 @@ import android.graphics.drawable.GradientDrawable
 import android.media.AudioManager
 import android.os.*
 import android.view.*
-import android.view.animation.LinearInterpolator
 import android.widget.*
 import androidx.core.app.NotificationCompat
-import android.animation.*
 import java.util.Calendar
 
 class FloatingWidgetService : Service() {
@@ -42,7 +40,7 @@ class FloatingWidgetService : Service() {
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("TV Dock Active")
+            .setContentTitle("TV Dock is Running")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .build()
         if (Build.VERSION.SDK_INT >= 34) {
