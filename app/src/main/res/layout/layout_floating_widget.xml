@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:orientation="horizontal" android:background="@drawable/rounded_bg"
-    android:gravity="center_vertical" android:padding="12dp">
+    android:gravity="center_vertical" android:padding="16dp">
     
     <FrameLayout android:id="@+id/clock_container" android:layout_width="100dp" android:layout_height="100dp" android:background="@drawable/circle_black">
         <ImageView android:id="@+id/hand_hour" android:layout_width="6dp" android:layout_height="25dp" android:src="@drawable/hand_hour" android:layout_gravity="center" android:layout_marginBottom="12dp" android:transformPivotY="25dp" android:transformPivotX="3dp"/>
@@ -11,9 +11,9 @@
     </FrameLayout>
 
     <LinearLayout android:id="@+id/controls_ribbon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
-        <View android:layout_width="4dp" android:layout_height="60dp" android:background="#4000E5FF" android:layout_marginHorizontal="20dp"/>
-        <ImageButton android:id="@+id/btn_home" android:layout_width="60dp" android:layout_height="60dp" android:background="?attr/selectableItemBackground" android:src="@android:drawable/ic_menu_today" android:layout_marginEnd="10dp"/>
-        <ImageButton android:id="@+id/btn_recent" android:layout_width="60dp" android:layout_height="60dp" android:background="?attr/selectableItemBackground" android:src="@android:drawable/ic_menu_manage" android:layout_marginEnd="10dp"/>
-        <ImageButton android:id="@+id/btn_volume" android:layout_width="60dp" android:layout_height="60dp" android:background="?attr/selectableItemBackground" android:src="@android:drawable/ic_lock_silent_mode_off"/>
+        <View android:layout_width="4dp" android:layout_height="64dp" android:background="#4000E5FF" android:layout_marginHorizontal="24dp"/>
+        <ImageButton android:id="@+id/btn_home" android:layout_width="64dp" android:layout_height="64dp" android:background="?attr/selectableItemBackground" android:src="@android:drawable/ic_menu_today" android:layout_marginEnd="12dp" android:scaleType="centerInside"/>
+        <ImageButton android:id="@+id/btn_recent" android:layout_width="64dp" android:layout_height="64dp" android:background="?attr/selectableItemBackground" android:src="@android:drawable/ic_menu_manage" android:layout_marginEnd="12dp" android:scaleType="centerInside"/>
+        <ImageButton android:id="@+id/btn_volume" android:layout_width="64dp" android:layout_height="64dp" android:background="?attr/selectableItemBackground" android:src="@android:drawable/ic_lock_silent_mode_off" android:scaleType="centerInside"/>
     </LinearLayout>
 </LinearLayout>

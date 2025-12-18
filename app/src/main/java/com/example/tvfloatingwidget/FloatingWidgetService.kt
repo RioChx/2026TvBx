@@ -3,8 +3,6 @@ import android.annotation.SuppressLint
 import android.app.*
 import android.content.*
 import android.graphics.*
-import android.graphics.drawable.GradientDrawable
-import android.media.AudioManager
 import android.os.*
 import android.view.*
 import android.widget.*
@@ -40,7 +38,7 @@ class FloatingWidgetService : Service() {
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("TV Dock is Running")
+            .setContentTitle("TV Dock Active")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .build()
         if (Build.VERSION.SDK_INT >= 34) {
@@ -68,7 +66,6 @@ class FloatingWidgetService : Service() {
         minuteHand = floatingView.findViewById(R.id.hand_minute)
         secondHand = floatingView.findViewById(R.id.hand_second)
         
-        val clockContainer = floatingView.findViewById<FrameLayout>(R.id.clock_container)
         val controlsRibbon = floatingView.findViewById<View>(R.id.controls_ribbon)
 
         val gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {

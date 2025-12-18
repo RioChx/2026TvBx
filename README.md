@@ -1,3 +1,3 @@
-# TV Floating Widget Source - Milestone 5 (v2.8 Final Fixed)
+# TV Dock Pro Source - Milestone 6 (v2.9 Master Build)
 
-ULTRA STABLE: Restores minimize/maximize logic, controls studio, and ensures compilation by providing correct layout IDs.
+ULTRA STABLE: Fixes AAPT resource errors, resolves ic_launcher missing resources, forces JVM 17, and ensures ID synchronization.
