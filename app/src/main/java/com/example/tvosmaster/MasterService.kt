@@ -1,4 +1,5 @@
 package com.example.tvosmaster
+import com.example.tvosmaster.R
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.*
@@ -38,7 +39,7 @@ class MasterService : Service() {
         textStudio = LayoutInflater.from(this).inflate(R.layout.layout_text_studio, null)
         val tsParams = createOverlayParams(100, 400)
         val marqueeText = textStudio?.findViewById<TextView>(R.id.tv_marquee)
-        marqueeText?.isSelected = true // Enable Marquee in code to avoid XML errors
+        marqueeText?.isSelected = true // Enable Marquee in code
         
         wm.addView(textStudio, tsParams)
         setupDraggable(textStudio!!, tsParams)
