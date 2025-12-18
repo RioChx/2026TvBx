@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.layout_main)
         
         findViewById<Button>(R.id.btn_launch)?.setOnClickListener {
-            // Launch the artistic master HUD system
+            // Initialize the Artistic TV Master Service
             startService(Intent(this, MasterService::class.java))
         }
     }

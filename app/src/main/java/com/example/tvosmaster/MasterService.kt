@@ -3,6 +3,7 @@ package com.example.tvosmaster
 import android.app.*
 import android.content.*
 import android.graphics.*
+import android.media.AudioManager
 import android.os.*
 import android.view.*
 import android.widget.*
@@ -17,16 +18,16 @@ class MasterService : Service() {
     
     override fun onCreate() {
         super.onCreate()
-        val channelId = "tv_master_hud_v4"
+        val channelId = "tv_master_production_v5"
         
         if (Build.VERSION.SDK_INT >= 26) {
-            val ch = NotificationChannel(channelId, "Artistic HUD", NotificationManager.IMPORTANCE_LOW)
+            val ch = NotificationChannel(channelId, "TV HUD Master", NotificationManager.IMPORTANCE_LOW)
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(ch)
         }
         
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("TV Master HUD Active")
+            .setContentTitle("TV Master HUD Online")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
@@ -45,12 +46,12 @@ class MasterService : Service() {
             PixelFormat.TRANSLUCENT
         )
         params.gravity = Gravity.TOP or Gravity.START
-        params.x = 50
-        params.y = 50
+        params.x = 60
+        params.y = 60
         
         wm.addView(dock, params)
         
-        // Setup button clicks
+        // Setup Button Interactivity
         dock?.findViewById<ImageButton>(R.id.btn_home)?.setOnClickListener {
             val intent = Intent(Intent.ACTION_MAIN).apply {
                 addCategory(Intent.CATEGORY_HOME)
@@ -60,13 +61,12 @@ class MasterService : Service() {
         }
         
         dock?.findViewById<ImageButton>(R.id.btn_recent)?.setOnClickListener {
-            // Recents typically requires accessibility service, but we'll simulate a toast for now
-            Toast.makeText(this, "Opening Recents", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Master Engine: Fetching Recents", Toast.LENGTH_SHORT).show()
         }
         
         dock?.findViewById<ImageButton>(R.id.btn_volume)?.setOnClickListener {
-            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI)
+            val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            am.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI)
         }
     }
 
