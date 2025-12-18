@@ -1,4 +1,4 @@
-name: Build Android 13 APK
+name: Master Build Android 13
 
 on:
   push:
@@ -21,38 +21,35 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Grant Execute Permission
-        run: chmod +x gradlew
-
-      - name: Master Force Sync
+      - name: Execute Master Override (One File to Rule All)
         run: |
-          echo "Executing Master Override..."
+          # 1. Prepare clean workspace
+          mkdir -p temp_java/com/example/tvosmaster
           
-          # 1. DELETE GHOST FOLDERS
-          rm -rf app/src/main/java/com/example/textstudiopro
+          # 2. Consolidate all code into ONE folder (Stops Redeclaration errors)
+          cp -rn app/src/main/java/com/example/tvfloatingwidget/* temp_java/com/example/tvosmaster/ || true
+          cp -rn app/src/main/java/com/example/tvosmaster/* temp_java/com/example/tvosmaster/ || true
           
-          # 2. SURGICAL MANIFEST FIX
-          # Instead of deleting lines, this ONLY removes the package attribute text
-          # This keeps the <manifest> tags perfectly intact
-          sed -i 's/package="com.example.[^"]*"//g' app/src/main/AndroidManifest.xml
+          # 3. Delete the old messy structure
+          rm -rf app/src/main/java/com/example/*
           
-          # 3. GLOBAL PACKAGE IDENTITY
-          # Forces every Kotlin file to belong to tvosmaster
+          # 4. Move the clean Master folder back in
+          mv temp_java/com/example/tvosmaster app/src/main/java/com/example/
+          
+          # 5. Rewrite file identities to match tvosmaster
           find app/src/main/java -name "*.kt" -exec sed -i 's/package com.example.*/package com.example.tvosmaster/g' {} +
-          
-          # 4. RESOURCE (R) IMPORT FIX
-          # Forces every file to look at the same master resource list
           find app/src/main/java -name "*.kt" -exec sed -i 's/import com.example.*.R/import com.example.tvosmaster.R/g' {} +
           
-          # 5. AUDIO MANAGER DUPLICATE FIX
-          find app/src/main/java -name "*.kt" -exec sed -i '/import android.media.AudioManager/d' {} +
-          find app/src/main/java -name "*.kt" -exec sed -i '/package /a import android.media.AudioManager' {} +
+          # 6. Fix Android 13 Manifest Structure
+          sed -i 's/package="com.example.[^"]*"//g' app/src/main/AndroidManifest.xml
 
-      - name: Build Final APK
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Generate APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
 
-      - name: Upload APK
+      - name: Upload Resulting APK
         uses: actions/upload-artifact@v4
         with:
-          name: Android-13-Final-APK
+          name: Final-TVOS-Master-APK
           path: app/build/outputs/apk/debug/*.apk
