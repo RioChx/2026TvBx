@@ -1,9 +1,4 @@
-pluginManagement {
-    repositories { google(); mavenCentral(); gradlePluginPortal(); }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories { google(); mavenCentral(); }
-}
-rootProject.name = "TVFloatingWidget"
+pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal(); } }
+dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS); repositories { google(); mavenCentral(); } }
+rootProject.name = "TextStudioPro"
 include ':app'

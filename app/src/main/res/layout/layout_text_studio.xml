@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="500dp" android:layout_height="120dp"
+    android:background="@drawable/rounded_bg" android:gravity="center" android:padding="16dp">
+    <TextView android:id="@+id/marqueeText" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="Text Studio Pro • Artistic Smooth Scrolling Display" android:textColor="#FFFFFF"
+        android:textSize="24sp" android:singleLine="true" android:ellipsize="marquee" android:marqueeRepeatLimit="marquee_forever" android:isSelected="true"/>
+</LinearLayout>
