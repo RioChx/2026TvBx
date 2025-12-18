@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.textstudiopro'
+    namespace 'com.example.tvosmaster'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.textstudiopro"
+        applicationId "com.example.tvosmaster"
         minSdk 26
         targetSdk 34
         versionCode 35

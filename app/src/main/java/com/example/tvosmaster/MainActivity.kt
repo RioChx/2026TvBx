@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Explicit R pathing to avoid unresolved references
+        // GLOBAL SYNC: Explicit R path
         setContentView(com.example.tvosmaster.R.layout.layout_main)
         
         val closeBtn = findViewById<ImageButton>(com.example.tvosmaster.R.id.btn_close_app)
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             } else {
                 startService(Intent(this, MasterService::class.java))
-                Toast.makeText(this, "Master Engine v3.5 Initialized", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "TV Master Engine Initialized", Toast.LENGTH_SHORT).show()
             }
         }
     }

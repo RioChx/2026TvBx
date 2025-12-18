@@ -6,14 +6,14 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="Text Studio Master"
+        android:label="TV Master HUD"
         android:theme="@style/Theme.TVOSMaster">
         <service 
-            android:name="com.example.textstudiopro.MasterService" 
+            android:name="com.example.tvosmaster.MasterService" 
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="specialUse" />
-        <activity android:name="com.example.textstudiopro.MainActivity" android:exported="true">
+        <activity android:name="com.example.tvosmaster.MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

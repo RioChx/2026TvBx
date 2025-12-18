@@ -7,7 +7,7 @@
     <TextView 
         android:id="@+id/tv_marquee"
         android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-        android:text="TEXT STUDIO PRO • PRODUCTION ENGINE LIVE • SYSTEM OVERLAY ACTIVE" 
+        android:text="TEXT STUDIO PRO • MASTER SYNC ACTIVE • SYSTEM LIVE" 
         android:textColor="#FFFFFF" android:textSize="32sp" android:textStyle="bold"
         android:singleLine="true" android:ellipsize="marquee" android:marqueeRepeatLimit="marquee_forever"
         android:scrollHorizontally="true" android:focusable="true" android:focusableInTouchMode="true" />

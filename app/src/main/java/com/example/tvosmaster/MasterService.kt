@@ -20,16 +20,16 @@ class MasterService : Service() {
     @SuppressLint("InflateParams", "ClickableViewAccessibility")
     override fun onCreate() {
         super.onCreate()
-        val channelId = "master_v35_service"
+        val channelId = "tvos_master_service_v35"
         
         if (Build.VERSION.SDK_INT >= 26) {
-            val ch = NotificationChannel(channelId, "TV System Master", NotificationManager.IMPORTANCE_LOW)
+            val ch = NotificationChannel(channelId, "TV Master System", NotificationManager.IMPORTANCE_LOW)
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(ch)
         }
         
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("TV OS Master Live")
+            .setContentTitle("TV Master Live")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
@@ -38,7 +38,7 @@ class MasterService : Service() {
         
         wm = getSystemService(WINDOW_SERVICE) as WindowManager
         
-        // Setup Dock Overlay with artistic clock and buttons
+        // GLOBAL SYNC: Using com.example.tvosmaster.R
         dock = LayoutInflater.from(this).inflate(com.example.tvosmaster.R.layout.layout_dock, null)
         val dockParams = createOverlayParams(50, 50)
         dock?.findViewById<ImageButton>(com.example.tvosmaster.R.id.btn_close_dock)?.setOnClickListener { 
@@ -47,7 +47,7 @@ class MasterService : Service() {
         wm.addView(dock, dockParams)
         setupDraggable(dock!!, dockParams)
 
-        // Setup Text Studio Overlay
+        // GLOBAL SYNC: Using com.example.tvosmaster.R
         textStudio = LayoutInflater.from(this).inflate(com.example.tvosmaster.R.layout.layout_text_studio, null)
         val tsParams = createOverlayParams(50, 250)
         val marqueeText = textStudio?.findViewById<TextView>(com.example.tvosmaster.R.id.tv_marquee)
