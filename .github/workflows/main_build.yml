@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android 13 APK
 
 on:
   push:
@@ -24,31 +24,33 @@ jobs:
       - name: Grant Execute Permission
         run: chmod +x gradlew
 
-      - name: Force Master Sync & Fix Manifest
+      - name: Master Force Sync
         run: |
-          echo "Overriding errors for Android 13 Build..."
+          echo "Executing Master Override..."
           
-          # 1. FIX THE MANIFEST ERROR (Removes unsupported package attribute)
-          sed -i 's/package="com.example.tvfloatingwidget"//g' app/src/main/AndroidManifest.xml
-          
-          # 2. DELETE ghost folders causing 'R' errors
+          # 1. DELETE GHOST FOLDERS
           rm -rf app/src/main/java/com/example/textstudiopro
           
-          # 3. FIX tvfloatingwidget references
-          find app/src/main/java/com/example/tvfloatingwidget -name "*.kt" -exec sed -i 's/import com.example.*.R/import com.example.tvosmaster.R/g' {} +
+          # 2. MANIFEST CLEANUP
+          # Removes the old 'package' line that crashes the new Gradle version
+          sed -i '/package="com.example.tvfloatingwidget"/d' app/src/main/AndroidManifest.xml
+          sed -i '/package="com.example.tvosmaster"/d' app/src/main/AndroidManifest.xml
 
-          # 4. CLEAN AudioManager conflicts in master folder
-          find app/src/main/java/com/example/tvosmaster -name "*.kt" -exec sed -i '/import android.media.AudioManager/d' {} +
-          find app/src/main/java/com/example/tvosmaster -name "*.kt" -exec sed -i '/package /a import android.media.AudioManager' {} +
-          
-          # 5. GLOBAL R-import override to tvosmaster
+          # 3. GLOBAL PACKAGE & RESOURCE OVERRIDE
+          # This forces EVERY file to use the correct TVOSMaster R-file and package identity
+          find app/src/main/java -name "*.kt" -exec sed -i 's/package com.example.*/package com.example.tvosmaster/g' {} +
           find app/src/main/java -name "*.kt" -exec sed -i 's/import com.example.*.R/import com.example.tvosmaster.R/g' {} +
+          
+          # 4. AUDIO MANAGER FIX
+          # Cleans up the duplicate AudioManager imports causing conflicts
+          find app/src/main/java -name "*.kt" -exec sed -i '/import android.media.AudioManager/d' {} +
+          find app/src/main/java -name "*.kt" -exec sed -i '/package /a import android.media.AudioManager' {} +
 
-      - name: Build Debug APK
+      - name: Build Final APK
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: Upload Android 13 APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-app-android-13
+          name: Android-13-Master-APK
           path: app/build/outputs/apk/debug/*.apk
