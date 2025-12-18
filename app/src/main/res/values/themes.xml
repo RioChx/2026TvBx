@@ -1,1 +1,9 @@
-<resources><style name="Theme.TVOSMaster" parent="Theme.MaterialComponents.DayNight.NoActionBar"><item name="colorPrimary">#00E5FF</item><item name="colorPrimaryVariant">#00B8D4</item><item name="colorOnPrimary">#000000</item></style></resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.TVOSMaster" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#00E5FF</item>
+        <item name="colorPrimaryVariant">#00B8D4</item>
+        <item name="colorOnPrimary">#000000</item>
+        <item name="android:windowBackground">#050505</item>
+    </style>
+</resources>
