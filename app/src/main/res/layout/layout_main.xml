@@ -2,13 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:background="#050505" android:padding="32dp">
-    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_centerInParent="true" android:orientation="vertical" android:gravity="center">
+    <ImageButton android:id="@+id/btn_close_app" android:layout_width="64dp" android:layout_height="64dp"
+        android:layout_alignParentTop="true" android:layout_alignParentEnd="true"
+        android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:tint="#40FFFFFF" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_centerInParent="true" android:orientation="vertical" android:gravity="center"
+        android:background="@drawable/dashboard_card" android:padding="80dp">
+        <ImageView android:layout_width="100dp" android:layout_height="100dp" android:src="@drawable/ic_launcher" android:layout_marginBottom="32dp" />
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="Text Studio Pro" android:textColor="#FFFFFF" android:textSize="32sp" android:textStyle="bold"/>
-        <TextView android:id="@+id/txt_status" android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="Status: Ready" android:textColor="#80FFFFFF" android:layout_marginTop="8dp"/>
-        <Button android:id="@+id/btn_start_service" android:layout_width="200dp" android:layout_height="64dp"
-            android:text="START OVERLAY" android:layout_marginTop="48dp" android:background="@drawable/button_bg" android:textColor="#000000"/>
+            android:text="TV OS MASTER PRO" android:textColor="#FFFFFF" android:textSize="42sp" android:textStyle="bold" android:letterSpacing="0.1"/>
+        <Button android:id="@+id/btn_launch" android:layout_width="340dp" android:layout_height="80dp"
+            android:text="LAUNCH SYSTEM CONTROLLER" android:layout_marginTop="72dp" android:background="@drawable/button_bg"
+            android:textColor="#000000" android:textStyle="bold" android:textSize="18sp" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="STABLE PRODUCTION BUILD v3.5" android:textColor="#26FFFFFF" android:layout_marginTop="56dp" android:textSize="10sp" android:letterSpacing="0.5"/>
     </LinearLayout>
 </RelativeLayout>
