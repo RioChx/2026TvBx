@@ -2,8 +2,8 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ "main" ] # Runs every time you push to the main branch
-  workflow_dispatch: # Allows you to run this manually from the "Actions" tab
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -22,11 +22,21 @@ jobs:
       - name: Grant Execute Permission for Gradlew
         run: chmod +x gradlew
 
+      # THIS STEP IS THE "MASTER OVERRIDE" TO FIX THE 99.9% ERROR
+      - name: Force Master R Sync
+        run: |
+          echo "Syncing all files to the master namespace..."
+          # Fix the imports in every Kotlin file automatically
+          find app/src/main/java -name "*.kt" -exec sed -i 's/import com.example.*.R/import com.example.tvosmaster.R/g' {} +
+          # Fix the AudioManager reference that failed in the last log
+          sed -i '/package /a import android.media.AudioManager' app/src/main/java/com/example/tvosmaster/MasterService.kt || true
+          echo "Sync complete."
+
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my-app-apk
+          name: app-debug-apk
           path: app/build/outputs/apk/debug/*.apk
