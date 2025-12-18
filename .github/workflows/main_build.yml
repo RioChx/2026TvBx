@@ -1,4 +1,4 @@
-name: Master Build Android 13 (Anti-Freeze Fix)
+name: Master Build Android 13 (Manifest & Anti-Freeze Fix)
 
 on:
   push:
@@ -50,8 +50,6 @@ jobs:
               android:orientation="vertical" android:gravity="center" android:background="#121212">
               <Button android:id="@+id/btnStart" android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:text="ACTIVATE TV CLOCK" android:padding="20dp" android:backgroundTint="#00E5FF" android:textColor="#000000" />
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:layout_marginTop="10dp" android:text="Grant all permissions to prevent freezing" android:textColor="#FFFFFF" />
           </LinearLayout>
           EOF
 
@@ -68,8 +66,37 @@ jobs:
           cat <<EOF > app/src/main/res/drawable/controls_ribbon.xml
           <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="200dp" android:height="4dp" android:viewportWidth="200" android:viewportHeight="4"><path android:fillColor="#4000E5FF" android:pathData="M0,0h200v4h-200z" /></vector>
           EOF
+          cat <<EOF > app/src/main/res/drawable/artistic_glass_panel.xml
+          <shape xmlns:android="http://schemas.android.com/apk/res/android"><solid android:color="#F2080808" /><corners android:radius="40dp" /><stroke android:width="1dp" android:color="#25FFFFFF" /></shape>
+          EOF
+          cat <<EOF > app/src/main/res/drawable/analog_clock_frame.xml
+          <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval"><solid android:color="#15FFFFFF" /><stroke android:width="2dp" android:color="#00E5FF" /></shape>
+          EOF
+          cat <<EOF > app/src/main/res/drawable/artistic_btn_bg.xml
+          <ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="#40FFFFFF"><item><shape><solid android:color="#15FFFFFF" /><corners android:radius="18dp" /></shape></item></ripple>
+          EOF
 
-          # 4. ANTI-FREEZE CODE INJECTION (Permissions & Notifications)
+          # 4. FULL MANIFEST OVERWRITE (Fixes SAXParseException)
+          cat <<EOF > app/src/main/AndroidManifest.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.tvosmaster">
+              <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+              <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+              <application android:allowBackup="true" android:label="TV Master Clock" android:theme="@style/Theme.AppCompat.NoActionBar">
+                  <activity android:name=".MainActivity" android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+                  <service android:name=".FloatingWidgetService" android:enabled="true" android:exported="false" android:foregroundServiceType="specialUse" />
+              </application>
+          </manifest>
+          EOF
+
+          # 5. CODE INJECTION (Anti-Freeze)
           cat <<EOF > app/src/main/java/com/example/tvosmaster/MainActivity.kt
           package com.example.tvosmaster
           import android.os.Bundle
@@ -85,35 +112,21 @@ jobs:
               override fun onCreate(savedInstanceState: Bundle?) {
                   super.onCreate(savedInstanceState)
                   setContentView(R.layout.activity_main)
-                  
                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                       ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
                   }
-                  
                   findViewById<Button>(R.id.btnStart).setOnClickListener {
                       if (!Settings.canDrawOverlays(this)) {
                           startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
                       } else {
                           val intent = Intent(this, FloatingWidgetService::class.java)
-                          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                              startForegroundService(intent)
-                          } else {
-                              startService(intent)
-                          }
+                          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { startForegroundService(intent) }
+                          else { startService(intent) }
                       }
                   }
               }
           }
           EOF
-
-          # 5. MANIFEST CLEANUP & PERMISSIONS
-          sed -i 's/package="com.example.[^"]*"//g' app/src/main/AndroidManifest.xml
-          # Add necessary permissions for Android 13
-          sed -i '/<manifest/a \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' app/src/main/AndroidManifest.xml
-          sed -i '/<manifest/a \    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />' app/src/main/AndroidManifest.xml
-          sed -i '/<manifest/a \    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />' app/src/main/AndroidManifest.xml
-          # Fix Service Declaration
-          sed -i '/<service/s/>/ android:foregroundServiceType="specialUse" android:exported="false" >/' app/src/main/AndroidManifest.xml
 
       - name: Build APK
         run: |
@@ -123,5 +136,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: TV-Clock-Fixed-APK
+          name: TV-Clock-Final-Fix-APK
           path: app/build/outputs/apk/debug/*.apk
