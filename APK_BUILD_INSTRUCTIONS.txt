@@ -1,0 +1,1 @@
+This ZIP contains the finalized Android Project source. To generate the .apk file: 1. Unzip this folder. 2. Open it in Android Studio. 3. Run './gradlew assembleDebug' or use the Build menu. The APK will be generated in app/build/outputs/apk/debug/.
