@@ -9,23 +9,12 @@
         android:allowBackup="true"
         android:icon="@android:mipmap/sym_def_app_icon"
         android:label="TVOS Master"
+        android:roundIcon="@android:mipmap/sym_def_app_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.TVOSMaster">
         
         <service 
             android:name=".MasterService" 
-            android:enabled="true" 
-            android:exported="false"
-            android:foregroundServiceType="specialUse" />
-
-        <service 
-            android:name=".TextStudioService" 
-            android:enabled="true" 
-            android:exported="false"
-            android:foregroundServiceType="specialUse" />
-
-        <service 
-            android:name=".FloatingWidgetService" 
             android:enabled="true" 
             android:exported="false"
             android:foregroundServiceType="specialUse" />

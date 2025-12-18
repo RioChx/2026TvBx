@@ -12,10 +12,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.layout_main)
         
         findViewById<Button>(R.id.btn_launch)?.setOnClickListener {
-            // Launch all master services
+            // Launch the artistic master HUD system
             startService(Intent(this, MasterService::class.java))
-            startService(Intent(this, TextStudioService::class.java))
-            startService(Intent(this, FloatingWidgetService::class.java))
         }
     }
 }

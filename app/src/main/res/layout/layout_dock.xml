@@ -2,9 +2,65 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#80000000"
-    android:padding="16dp"
-    android:orientation="horizontal">
-    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@android:drawable/ic_menu_home" />
-    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:layout_marginStart="16dp" android:src="@android:drawable/ic_menu_recent_history" />
+    android:background="@drawable/dock_background"
+    android:padding="12dp"
+    android:elevation="12dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+    
+    <!-- Artistic Analog-Style Clock -->
+    <FrameLayout
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/clock_face">
+        <TextClock
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:format12Hour="hh:mm"
+            android:textColor="#00E5FF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="2dp"
+        android:layout_height="40dp"
+        android:background="#20FFFFFF"
+        android:layout_marginEnd="16dp" />
+
+    <!-- Control Buttons -->
+    <ImageButton
+        android:id="@+id/btn_home"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/button_selector"
+        android:src="@drawable/ic_home"
+        android:scaleType="centerInside"
+        android:padding="12dp"
+        android:tint="#00E5FF" />
+
+    <ImageButton
+        android:id="@+id/btn_recent"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/button_selector"
+        android:src="@drawable/ic_recent"
+        android:scaleType="centerInside"
+        android:padding="12dp"
+        android:tint="#A855F7" />
+
+    <ImageButton
+        android:id="@+id/btn_volume"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/button_selector"
+        android:src="@drawable/ic_volume"
+        android:scaleType="centerInside"
+        android:padding="12dp"
+        android:tint="#22C55E" />
+
 </LinearLayout>

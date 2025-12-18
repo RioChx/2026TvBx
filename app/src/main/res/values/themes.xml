@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.TVOSMaster" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+    <style name="Theme.TVOSMaster" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#00E5FF</item>
+    </style>
 </resources>
