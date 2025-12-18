@@ -20,16 +20,16 @@ class MasterService : Service() {
     @SuppressLint("InflateParams", "ClickableViewAccessibility")
     override fun onCreate() {
         super.onCreate()
-        val channelId = "text_studio_service_v35"
+        val channelId = "tv_box_master_service_v35"
         
         if (Build.VERSION.SDK_INT >= 26) {
-            val ch = NotificationChannel(channelId, "Text Studio Master", NotificationManager.IMPORTANCE_LOW)
+            val ch = NotificationChannel(channelId, "System HUD", NotificationManager.IMPORTANCE_LOW)
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(ch)
         }
         
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Text Studio Live")
+            .setContentTitle("TV Master Hub Live")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
@@ -38,18 +38,17 @@ class MasterService : Service() {
         
         wm = getSystemService(WINDOW_SERVICE) as WindowManager
         
-        // MASTER SYNC: Explicit R path for Dock
+        // FORCED IDENTITY SYNC: Absolute R reference
         dock = LayoutInflater.from(this).inflate(com.example.textstudiopro.R.layout.layout_dock, null)
-        val dockParams = createOverlayParams(60, 60)
+        val dockParams = createOverlayParams(50, 50)
         dock?.findViewById<ImageButton>(com.example.textstudiopro.R.id.btn_close_dock)?.setOnClickListener { 
             stopSelf() 
         }
         wm.addView(dock, dockParams)
         setupDraggable(dock!!, dockParams)
 
-        // MASTER SYNC: Explicit R path for Text Studio
         textStudio = LayoutInflater.from(this).inflate(com.example.textstudiopro.R.layout.layout_text_studio, null)
-        val tsParams = createOverlayParams(60, 300)
+        val tsParams = createOverlayParams(50, 250)
         val marqueeText = textStudio?.findViewById<TextView>(com.example.textstudiopro.R.id.tv_marquee)
         marqueeText?.isSelected = true
         

@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "TVOSMasterPro"
+rootProject.name = "TextStudioPro"
 include ':app'
