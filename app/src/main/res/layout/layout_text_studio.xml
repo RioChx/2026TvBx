@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="800dp" android:layout_height="140dp"
-    android:background="#F2000000" android:gravity="center_vertical" android:padding="32dp">
-    <TextView 
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="#E6000000"
+    android:gravity="center_vertical"
+    android:padding="16dp">
+    <TextView
         android:id="@+id/tv_marquee"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="TEXT STUDIO PRO • HUD SYSTEM ONLINE" 
-        android:textColor="#FFFFFF" android:textSize="32sp" android:textStyle="bold"
-        android:singleLine="true" android:ellipsize="marquee" android:marqueeRepeatLimit="marquee_forever" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SYSTEM STATUS: ONLINE • TEXT STUDIO PRO ACTIVE • GLOBAL OVERLAY RENDERING"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever" />
 </LinearLayout>

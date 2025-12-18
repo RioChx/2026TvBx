@@ -9,48 +9,52 @@ import android.widget.*
 import androidx.core.app.NotificationCompat
 import com.example.tvosmaster.R
 
-class MasterService : Service() {
+class TextStudioService : Service() {
     private lateinit var wm: WindowManager
-    private var dock: View? = null
+    private var ribbon: View? = null
     
     override fun onBind(i: Intent?): IBinder? = null
     
     override fun onCreate() {
         super.onCreate()
-        val channelId = "tv_master_sync"
+        val channelId = "tv_text_studio"
         
         if (Build.VERSION.SDK_INT >= 26) {
-            val ch = NotificationChannel(channelId, "Master HUD", NotificationManager.IMPORTANCE_LOW)
+            val ch = NotificationChannel(channelId, "Text Studio", NotificationManager.IMPORTANCE_LOW)
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(ch)
         }
         
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Master HUD Live")
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setContentTitle("Text Studio Active")
+            .setSmallIcon(android.R.drawable.ic_menu_edit)
             .build()
             
-        startForeground(1, notification)
+        startForeground(2, notification)
         
         wm = getSystemService(WINDOW_SERVICE) as WindowManager
         
         val inflater = LayoutInflater.from(this)
-        dock = inflater.inflate(R.layout.layout_dock, null)
+        ribbon = inflater.inflate(R.layout.layout_text_studio, null)
         
         val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             if (Build.VERSION.SDK_INT >= 26) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
-        params.gravity = Gravity.TOP or Gravity.START
-        wm.addView(dock, params)
+        params.gravity = Gravity.BOTTOM
+        params.y = 100
+        
+        wm.addView(ribbon, params)
+        
+        val textView = ribbon?.findViewById<TextView>(R.id.tv_marquee)
+        textView?.isSelected = true // Trigger marquee
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        dock?.let { wm.removeView(it) }
+        ribbon?.let { wm.removeView(it) }
     }
 }
