@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.layout_main)
         
         findViewById<Button>(R.id.btn_launch)?.setOnClickListener {
-            // Launch both system services
+            // Launch production services
             startService(Intent(this, MasterService::class.java))
             startService(Intent(this, TextStudioService::class.java))
         }

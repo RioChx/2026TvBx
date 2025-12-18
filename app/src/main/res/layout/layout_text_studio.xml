@@ -9,7 +9,7 @@
         android:id="@+id/tv_marquee"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SYSTEM STATUS: ONLINE • TEXT STUDIO PRO ACTIVE • GLOBAL OVERLAY RENDERING"
+        android:text="SYSTEM STATUS: ONLINE • OVERLAY RENDERING ACTIVE • NO ERRORS DETECTED"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:textStyle="bold"

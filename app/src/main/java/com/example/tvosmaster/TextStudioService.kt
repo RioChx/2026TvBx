@@ -50,7 +50,7 @@ class TextStudioService : Service() {
         wm.addView(ribbon, params)
         
         val textView = ribbon?.findViewById<TextView>(R.id.tv_marquee)
-        textView?.isSelected = true // Trigger marquee
+        textView?.isSelected = true // Required for Marquee to scroll
     }
 
     override fun onDestroy() {
