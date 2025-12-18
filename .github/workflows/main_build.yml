@@ -31,18 +31,20 @@ jobs:
           # 1. DELETE GHOST FOLDERS
           rm -rf app/src/main/java/com/example/textstudiopro
           
-          # 2. MANIFEST CLEANUP
-          # Removes the old 'package' line that crashes the new Gradle version
-          sed -i '/package="com.example.tvfloatingwidget"/d' app/src/main/AndroidManifest.xml
-          sed -i '/package="com.example.tvosmaster"/d' app/src/main/AndroidManifest.xml
-
-          # 3. GLOBAL PACKAGE & RESOURCE OVERRIDE
-          # This forces EVERY file to use the correct TVOSMaster R-file and package identity
+          # 2. SURGICAL MANIFEST FIX
+          # Instead of deleting lines, this ONLY removes the package attribute text
+          # This keeps the <manifest> tags perfectly intact
+          sed -i 's/package="com.example.[^"]*"//g' app/src/main/AndroidManifest.xml
+          
+          # 3. GLOBAL PACKAGE IDENTITY
+          # Forces every Kotlin file to belong to tvosmaster
           find app/src/main/java -name "*.kt" -exec sed -i 's/package com.example.*/package com.example.tvosmaster/g' {} +
+          
+          # 4. RESOURCE (R) IMPORT FIX
+          # Forces every file to look at the same master resource list
           find app/src/main/java -name "*.kt" -exec sed -i 's/import com.example.*.R/import com.example.tvosmaster.R/g' {} +
           
-          # 4. AUDIO MANAGER FIX
-          # Cleans up the duplicate AudioManager imports causing conflicts
+          # 5. AUDIO MANAGER DUPLICATE FIX
           find app/src/main/java -name "*.kt" -exec sed -i '/import android.media.AudioManager/d' {} +
           find app/src/main/java -name "*.kt" -exec sed -i '/package /a import android.media.AudioManager' {} +
 
@@ -52,5 +54,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Android-13-Master-APK
+          name: Android-13-Final-APK
           path: app/build/outputs/apk/debug/*.apk
