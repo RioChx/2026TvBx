@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -19,18 +21,20 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Grant Execute Permission for Gradlew
+      - name: Grant Execute Permission
         run: chmod +x gradlew
 
-      # THIS STEP IS THE "MASTER OVERRIDE" TO FIX THE 99.9% ERROR
-      - name: Force Master R Sync
+      - name: Force Master Sync
         run: |
-          echo "Syncing all files to the master namespace..."
-          # Fix the imports in every Kotlin file automatically
+          # 1. Delete the duplicate ghost folder causing the 'R' errors
+          rm -rf app/src/main/java/com/example/textstudiopro
+          
+          # 2. Fix the AudioManager conflict (Cleans and re-adds correctly)
+          find app/src/main/java/com/example/tvosmaster -name "*.kt" -exec sed -i '/import android.media.AudioManager/d' {} +
+          find app/src/main/java/com/example/tvosmaster -name "*.kt" -exec sed -i '/package /a import android.media.AudioManager' {} +
+          
+          # 3. Point all files to the Master 'R' reference
           find app/src/main/java -name "*.kt" -exec sed -i 's/import com.example.*.R/import com.example.tvosmaster.R/g' {} +
-          # Fix the AudioManager reference that failed in the last log
-          sed -i '/package /a import android.media.AudioManager' app/src/main/java/com/example/tvosmaster/MasterService.kt || true
-          echo "Sync complete."
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace
@@ -38,5 +42,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
+          name: my-android-13-apk
           path: app/build/outputs/apk/debug/*.apk
