@@ -1,3 +1,3 @@
-# TV Floating Widget Source - Milestone 3 (v2.6 Fixed Final)
+# TV Floating Widget Source - Milestone 4 (v2.7 Fixed Ultra Stable)
 
-Final working project with aligned JVM targets (17) to fix "compileDebugKotlin" inconsistency errors.
+ULTRA STABLE: Restores minimize behavior, settings studio, and fixes all JVM-target build errors.
