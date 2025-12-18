@@ -11,20 +11,22 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Ensure explicit R reference
+        // CRITICAL: Strict namespace R reference
         setContentView(com.example.tvosmaster.R.layout.layout_main)
         
-        findViewById<ImageButton>(com.example.tvosmaster.R.id.btn_close_app).setOnClickListener { 
+        val closeBtn = findViewById<ImageButton>(com.example.tvosmaster.R.id.btn_close_app)
+        closeBtn?.setOnClickListener { 
             finish() 
         }
         
-        findViewById<Button>(com.example.tvosmaster.R.id.btn_launch).setOnClickListener {
+        val launchBtn = findViewById<Button>(com.example.tvosmaster.R.id.btn_launch)
+        launchBtn?.setOnClickListener {
             if (!Settings.canDrawOverlays(this)) {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
                 startActivity(intent)
             } else {
                 startService(Intent(this, MasterService::class.java))
-                Toast.makeText(this, "Master Engine v3.5 Live", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Master Engine v3.5 Active", Toast.LENGTH_SHORT).show()
             }
         }
     }

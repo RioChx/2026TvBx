@@ -29,7 +29,7 @@ class MasterService : Service() {
         }
         
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("TV OS Master Active")
+            .setContentTitle("TV OS Master Live")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
@@ -38,18 +38,18 @@ class MasterService : Service() {
         
         wm = getSystemService(WINDOW_SERVICE) as WindowManager
         
-        // Setup Dock Overlay
+        // Setup Dock Overlay using explicit R paths
         dock = LayoutInflater.from(this).inflate(com.example.tvosmaster.R.layout.layout_dock, null)
-        val dockParams = createOverlayParams(50, 50)
+        val dockParams = createOverlayParams(40, 40)
         dock?.findViewById<ImageButton>(com.example.tvosmaster.R.id.btn_close_dock)?.setOnClickListener { 
             stopSelf() 
         }
         wm.addView(dock, dockParams)
         setupDraggable(dock!!, dockParams)
 
-        // Setup Text Studio Overlay
+        // Setup Text Studio Overlay using explicit R paths
         textStudio = LayoutInflater.from(this).inflate(com.example.tvosmaster.R.layout.layout_text_studio, null)
-        val tsParams = createOverlayParams(50, 250)
+        val tsParams = createOverlayParams(40, 300)
         val marqueeText = textStudio?.findViewById<TextView>(com.example.tvosmaster.R.id.tv_marquee)
         marqueeText?.isSelected = true
         
