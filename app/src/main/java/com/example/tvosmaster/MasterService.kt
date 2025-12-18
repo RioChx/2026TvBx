@@ -28,18 +28,16 @@ class MasterService : Service() {
         
         wm = getSystemService(WINDOW_SERVICE) as WindowManager
         
-        // Setup Dock
         dock = LayoutInflater.from(this).inflate(R.layout.layout_dock, null)
         val dockParams = createOverlayParams(100, 100)
         dock?.findViewById<ImageButton>(R.id.btn_close_dock)?.setOnClickListener { stopSelf() }
         wm.addView(dock, dockParams)
         setupDraggable(dock!!, dockParams)
 
-        // Setup Text Studio
         textStudio = LayoutInflater.from(this).inflate(R.layout.layout_text_studio, null)
         val tsParams = createOverlayParams(100, 400)
         val marqueeText = textStudio?.findViewById<TextView>(R.id.tv_marquee)
-        marqueeText?.isSelected = true // Enable Marquee in code
+        marqueeText?.isSelected = true
         
         wm.addView(textStudio, tsParams)
         setupDraggable(textStudio!!, tsParams)
