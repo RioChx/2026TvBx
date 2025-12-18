@@ -2,23 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:orientation="horizontal" android:background="@drawable/rounded_bg"
-    android:gravity="center_vertical" android:padding="10dp" android:elevation="8dp">
-    
+    android:gravity="center_vertical" android:padding="10dp">
     <FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
         <View android:id="@+id/rgb_border" android:layout_width="118dp" android:layout_height="118dp" />
-        <FrameLayout android:id="@+id/clock_container" android:layout_width="112dp" android:layout_height="112dp"
-            android:layout_gravity="center" android:background="@drawable/circle_black">
+        <FrameLayout android:id="@+id/clock_container" android:layout_width="112dp" android:layout_height="112dp" android:layout_gravity="center" android:background="@drawable/circle_black">
             <ImageView android:id="@+id/hand_hour" android:layout_width="8dp" android:layout_height="28dp" android:src="@drawable/hand_hour" android:layout_gravity="center" android:layout_marginBottom="14dp" android:transformPivotY="28dp" android:transformPivotX="4dp"/>
             <ImageView android:id="@+id/hand_minute" android:layout_width="6dp" android:layout_height="38dp" android:src="@drawable/hand_minute" android:layout_gravity="center" android:layout_marginBottom="19dp" android:transformPivotY="38dp" android:transformPivotX="3dp"/>
             <ImageView android:id="@+id/hand_second" android:layout_width="2dp" android:layout_height="44dp" android:src="@drawable/hand_second" android:layout_gravity="center" android:layout_marginBottom="22dp" android:transformPivotY="44dp" android:transformPivotX="1dp"/>
         </FrameLayout>
     </FrameLayout>
-
-    <View android:layout_width="3dp" android:layout_height="60dp" android:background="#60FFFFFF" android:layout_marginHorizontal="20dp"/>
-
+    <View android:layout_width="2dp" android:layout_height="60dp" android:background="#40FFFFFF" android:layout_marginHorizontal="15dp"/>
     <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
-        <ImageButton android:id="@+id/btn_home" android:layout_width="74dp" android:layout_height="74dp" android:background="@drawable/bg_home" android:src="@drawable/ic_home" android:padding="18dp" android:scaleType="fitCenter" android:layout_marginEnd="12dp"/>
-        <ImageButton android:id="@+id/btn_recent" android:layout_width="74dp" android:layout_height="74dp" android:background="@drawable/bg_recent" android:src="@drawable/ic_layers" android:padding="18dp" android:scaleType="fitCenter" android:layout_marginEnd="12dp"/>
-        <ImageButton android:id="@+id/btn_volume" android:layout_width="74dp" android:layout_height="74dp" android:background="@drawable/bg_volume" android:src="@drawable/ic_volume" android:padding="18dp" android:scaleType="fitCenter"/>
+        <ImageButton android:id="@+id/btn_home" android:layout_width="70dp" android:layout_height="70dp" android:background="@drawable/bg_home" android:src="@drawable/ic_home" android:padding="15dp" android:scaleType="fitCenter" android:layout_marginEnd="10dp"/>
+        <ImageButton android:id="@+id/btn_recent" android:layout_width="70dp" android:layout_height="70dp" android:background="@drawable/bg_recent" android:src="@drawable/ic_layers" android:padding="15dp" android:scaleType="fitCenter" android:layout_marginEnd="10dp"/>
+        <ImageButton android:id="@+id/btn_volume" android:layout_width="70dp" android:layout_height="70dp" android:background="@drawable/bg_volume" android:src="@drawable/ic_volume" android:padding="15dp" android:scaleType="fitCenter"/>
     </LinearLayout>
 </LinearLayout>
