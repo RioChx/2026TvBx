@@ -17,24 +17,22 @@ class MasterService : Service() {
     
     override fun onCreate() {
         super.onCreate()
-        val channelId = "tv_master_sync"
+        val channelId = "tv_master_dock"
         
         if (Build.VERSION.SDK_INT >= 26) {
-            val ch = NotificationChannel(channelId, "Master HUD", NotificationManager.IMPORTANCE_LOW)
+            val ch = NotificationChannel(channelId, "Dock HUD", NotificationManager.IMPORTANCE_LOW)
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(ch)
         }
         
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Master HUD Live")
+            .setContentTitle("Master Dock Active")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
             
         startForeground(1, notification)
         
         wm = getSystemService(WINDOW_SERVICE) as WindowManager
-        
         val inflater = LayoutInflater.from(this)
         dock = inflater.inflate(R.layout.layout_dock, null)
         
