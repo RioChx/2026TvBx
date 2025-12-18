@@ -1,4 +1,4 @@
-name: Master Build Android 13 (Full Runtime Fix)
+name: Master Build Android 13 (Anti-Freeze Fix)
 
 on:
   push:
@@ -34,26 +34,24 @@ jobs:
           find app/src/main/java -name "*.kt" -exec sed -i 's/package com.example.*/package com.example.tvosmaster/g' {} +
           find app/src/main/java -name "*.kt" -exec sed -i 's/import com.example.*.R/import com.example.tvosmaster.R/g' {} +
           
-          # 3. RESOURCE INJECTION (Images & Layouts)
+          # 3. RESOURCE INJECTION (UI & Assets)
           mkdir -p app/src/main/res/drawable
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
 
-          # Inject IDs and UI Assets
           cat <<EOF > app/src/main/res/values/ids.xml
           <?xml version="1.0" encoding="utf-8"?><resources><item type="id" name="hand_hour" /><item type="id" name="hand_minute" /><item type="id" name="hand_second" /><item type="id" name="controls_ribbon" /></resources>
           EOF
-          
-          # Force create a layout so the page isn't white
+
           cat <<EOF > app/src/main/res/layout/activity_main.xml
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent" android:layout_height="match_parent"
               android:orientation="vertical" android:gravity="center" android:background="#121212">
               <Button android:id="@+id/btnStart" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:text="ACTIVATE TV CLOCK" android:padding="20dp" />
+                  android:text="ACTIVATE TV CLOCK" android:padding="20dp" android:backgroundTint="#00E5FF" android:textColor="#000000" />
               <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:text="Grant Overlay Permission if prompted" android:textColor="#FFFFFF" />
+                  android:layout_marginTop="10dp" android:text="Grant all permissions to prevent freezing" android:textColor="#FFFFFF" />
           </LinearLayout>
           EOF
 
@@ -71,8 +69,7 @@ jobs:
           <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="200dp" android:height="4dp" android:viewportWidth="200" android:viewportHeight="4"><path android:fillColor="#4000E5FF" android:pathData="M0,0h200v4h-200z" /></vector>
           EOF
 
-          # 4. CODE INJECTION (The "White Page" Killers)
-          # Fix MainActivity to handle permission AND the Start Button
+          # 4. ANTI-FREEZE CODE INJECTION (Permissions & Notifications)
           cat <<EOF > app/src/main/java/com/example/tvosmaster/MainActivity.kt
           package com.example.tvosmaster
           import android.os.Bundle
@@ -80,29 +77,45 @@ jobs:
           import android.provider.Settings
           import android.widget.Button
           import androidx.appcompat.app.AppCompatActivity
+          import androidx.core.app.ActivityCompat
+          import android.Manifest
+          import android.os.Build
 
           class MainActivity : AppCompatActivity() {
               override fun onCreate(savedInstanceState: Bundle?) {
                   super.onCreate(savedInstanceState)
                   setContentView(R.layout.activity_main)
                   
+                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                      ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
+                  }
+                  
                   findViewById<Button>(R.id.btnStart).setOnClickListener {
                       if (!Settings.canDrawOverlays(this)) {
                           startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
                       } else {
-                          startService(Intent(this, FloatingWidgetService::class.java))
+                          val intent = Intent(this, FloatingWidgetService::class.java)
+                          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                              startForegroundService(intent)
+                          } else {
+                              startService(intent)
+                          }
                       }
                   }
               }
           }
           EOF
 
-          # 5. MANIFEST & SERVICE FIX
+          # 5. MANIFEST CLEANUP & PERMISSIONS
           sed -i 's/package="com.example.[^"]*"//g' app/src/main/AndroidManifest.xml
-          # Ensure Service has permission and foreground type
+          # Add necessary permissions for Android 13
+          sed -i '/<manifest/a \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' app/src/main/AndroidManifest.xml
+          sed -i '/<manifest/a \    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />' app/src/main/AndroidManifest.xml
+          sed -i '/<manifest/a \    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />' app/src/main/AndroidManifest.xml
+          # Fix Service Declaration
           sed -i '/<service/s/>/ android:foregroundServiceType="specialUse" android:exported="false" >/' app/src/main/AndroidManifest.xml
 
-      - name: Build Final APK
+      - name: Build APK
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
@@ -110,5 +123,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: TV-Master-Clock-APK
+          name: TV-Clock-Fixed-APK
           path: app/build/outputs/apk/debug/*.apk
