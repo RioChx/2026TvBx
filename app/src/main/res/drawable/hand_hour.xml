@@ -1,1 +1,11 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle"><solid android:color="#FFFFFF"/><corners android:radius="2dp"/></shape>
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <!-- Hour hand: shorter, thicker, pointing from center (60,60) -->
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M58,35h4v25h-4z" />
+</vector>

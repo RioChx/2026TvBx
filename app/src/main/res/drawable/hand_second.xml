@@ -1,1 +1,11 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle"><solid android:color="#FF0000"/></shape>
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <!-- Second hand: very thin, pulse red -->
+    <path
+        android:fillColor="#FF3D00"
+        android:pathData="M59.5,15h1v45h-1z" />
+</vector>
