@@ -1,4 +1,4 @@
-name: Master Build Android 13 (Final 100% Fix)
+name: Master Build Android 13 (Full Runtime Fix)
 
 on:
   push:
@@ -23,32 +23,41 @@ jobs:
 
       - name: Master Project Override
         run: |
-          # 1. FIX FOLDER CONFLICTS (Eliminates Redeclaration Errors)
-          # Moves all logic into 'tvosmaster' and wipes 'tvfloatingwidget'
+          # 1. FOLDER CONSOLIDATION
           mkdir -p temp_java/com/example/tvosmaster
           cp -rn app/src/main/java/com/example/tvfloatingwidget/* temp_java/com/example/tvosmaster/ || true
           cp -rn app/src/main/java/com/example/tvosmaster/* temp_java/com/example/tvosmaster/ || true
           rm -rf app/src/main/java/com/example/*
           mv temp_java/com/example/tvosmaster app/src/main/java/com/example/
           
-          # 2. ALIGN PACKAGE NAMES (Fixes Import Errors)
+          # 2. PACKAGE & ASSET ALIGNMENT
           find app/src/main/java -name "*.kt" -exec sed -i 's/package com.example.*/package com.example.tvosmaster/g' {} +
           find app/src/main/java -name "*.kt" -exec sed -i 's/import com.example.*.R/import com.example.tvosmaster.R/g' {} +
           
-          # 3. RESOURCE INJECTION (Fixes 'Unresolved reference' Errors)
+          # 3. RESOURCE INJECTION (Images & Layouts)
           mkdir -p app/src/main/res/drawable
+          mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
 
-          # Create IDs for the compiler
+          # Inject IDs and UI Assets
           cat <<EOF > app/src/main/res/values/ids.xml
+          <?xml version="1.0" encoding="utf-8"?><resources><item type="id" name="hand_hour" /><item type="id" name="hand_minute" /><item type="id" name="hand_second" /><item type="id" name="controls_ribbon" /></resources>
+          EOF
+          
+          # Force create a layout so the page isn't white
+          cat <<EOF > app/src/main/res/layout/activity_main.xml
           <?xml version="1.0" encoding="utf-8"?>
-          <resources>
-              <item type="id" name="hand_hour" /><item type="id" name="hand_minute" />
-              <item type="id" name="hand_second" /><item type="id" name="controls_ribbon" />
-          </resources>
+          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent" android:layout_height="match_parent"
+              android:orientation="vertical" android:gravity="center" android:background="#121212">
+              <Button android:id="@+id/btnStart" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="ACTIVATE TV CLOCK" android:padding="20dp" />
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="Grant Overlay Permission if prompted" android:textColor="#FFFFFF" />
+          </LinearLayout>
           EOF
 
-          # Inject XML Assets provided by the user
+          # Inject the Vector Assets you provided
           cat <<EOF > app/src/main/res/drawable/hand_hour.xml
           <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="120dp" android:height="120dp" android:viewportWidth="120" android:viewportHeight="120"><path android:fillColor="#00E5FF" android:pathData="M58,35h4v25h-4z" /></vector>
           EOF
@@ -61,29 +70,39 @@ jobs:
           cat <<EOF > app/src/main/res/drawable/controls_ribbon.xml
           <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="200dp" android:height="4dp" android:viewportWidth="200" android:viewportHeight="4"><path android:fillColor="#4000E5FF" android:pathData="M0,0h200v4h-200z" /></vector>
           EOF
-          cat <<EOF > app/src/main/res/drawable/artistic_glass_panel.xml
-          <shape xmlns:android="http://schemas.android.com/apk/res/android"><solid android:color="#F2080808" /><corners android:radius="40dp" /><stroke android:width="1dp" android:color="#25FFFFFF" /></shape>
-          EOF
-          cat <<EOF > app/src/main/res/drawable/analog_clock_frame.xml
-          <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval"><solid android:color="#15FFFFFF" /><stroke android:width="2dp" android:color="#00E5FF" /></shape>
-          EOF
-          cat <<EOF > app/src/main/res/drawable/artistic_btn_bg.xml
-          <ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="#40FFFFFF"><item><shape><solid android:color="#15FFFFFF" /><corners android:radius="18dp" /></shape></item></ripple>
+
+          # 4. CODE INJECTION (The "White Page" Killers)
+          # Fix MainActivity to handle permission AND the Start Button
+          cat <<EOF > app/src/main/java/com/example/tvosmaster/MainActivity.kt
+          package com.example.tvosmaster
+          import android.os.Bundle
+          import android.content.Intent
+          import android.provider.Settings
+          import android.widget.Button
+          import androidx.appcompat.app.AppCompatActivity
+
+          class MainActivity : AppCompatActivity() {
+              override fun onCreate(savedInstanceState: Bundle?) {
+                  super.onCreate(savedInstanceState)
+                  setContentView(R.layout.activity_main)
+                  
+                  findViewById<Button>(R.id.btnStart).setOnClickListener {
+                      if (!Settings.canDrawOverlays(this)) {
+                          startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
+                      } else {
+                          startService(Intent(this, FloatingWidgetService::class.java))
+                      }
+                  }
+              }
+          }
           EOF
 
-          # 4. RUNTIME FIX (Fixes the White Page/Overlay Permission)
-          # Injects the Overlay Permission request into MainActivity.kt
-          sed -i '/onCreate/a \    if (!android.provider.Settings.canDrawOverlays(this)) { \
-              val intent = android.content.Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION) \
-              startActivity(intent) \
-          }' app/src/main/java/com/example/tvosmaster/MainActivity.kt
-
-          # 5. MANIFEST CLEANUP
+          # 5. MANIFEST & SERVICE FIX
           sed -i 's/package="com.example.[^"]*"//g' app/src/main/AndroidManifest.xml
-          # Add Foreground Service Type for Android 13
-          sed -i '/<service/s/>/ android:foregroundServiceType="specialUse" >/' app/src/main/AndroidManifest.xml
+          # Ensure Service has permission and foreground type
+          sed -i '/<service/s/>/ android:foregroundServiceType="specialUse" android:exported="false" >/' app/src/main/AndroidManifest.xml
 
-      - name: Build APK
+      - name: Build Final APK
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
@@ -91,5 +110,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Final-TV-Widget-APK
+          name: TV-Master-Clock-APK
           path: app/build/outputs/apk/debug/*.apk
