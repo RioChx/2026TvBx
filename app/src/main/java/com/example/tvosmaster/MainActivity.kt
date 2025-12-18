@@ -13,7 +13,8 @@ class MainActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btn_close_app).setOnClickListener { finish() }
         findViewById<Button>(R.id.btn_launch).setOnClickListener {
             if (!Settings.canDrawOverlays(this)) {
-                startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+                startActivity(intent)
             } else {
                 startService(Intent(this, MasterService::class.java))
                 Toast.makeText(this, "Master Engine v3.5 Initialized", Toast.LENGTH_SHORT).show()
