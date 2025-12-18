@@ -1,3 +1,3 @@
-# TV Floating Widget Source - Milestone 2 (v2.5 Fixed Final)
+# TV Floating Widget Source - Milestone 3 (v2.6 Fixed Final)
 
-Complete project with Artistic Clock and Gradle build fix for CI compatibility.
+Final working project with aligned JVM targets (17) to fix "compileDebugKotlin" inconsistency errors.
