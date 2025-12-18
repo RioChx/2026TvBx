@@ -1,4 +1,4 @@
-name: Master Build Android 13 (Manifest & Anti-Freeze Fix)
+name: Ultimate Master Build (No-Crash Version)
 
 on:
   push:
@@ -8,8 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -23,37 +21,14 @@ jobs:
 
       - name: Master Project Override
         run: |
-          # 1. FOLDER CONSOLIDATION
-          mkdir -p temp_java/com/example/tvosmaster
-          cp -rn app/src/main/java/com/example/tvfloatingwidget/* temp_java/com/example/tvosmaster/ || true
-          cp -rn app/src/main/java/com/example/tvosmaster/* temp_java/com/example/tvosmaster/ || true
-          rm -rf app/src/main/java/com/example/*
-          mv temp_java/com/example/tvosmaster app/src/main/java/com/example/
-          
-          # 2. PACKAGE & ASSET ALIGNMENT
-          find app/src/main/java -name "*.kt" -exec sed -i 's/package com.example.*/package com.example.tvosmaster/g' {} +
-          find app/src/main/java -name "*.kt" -exec sed -i 's/import com.example.*.R/import com.example.tvosmaster.R/g' {} +
-          
-          # 3. RESOURCE INJECTION (UI & Assets)
+          # 1. CLEANING AND REORGANIZING
+          mkdir -p app/src/main/java/com/example/tvosmaster
           mkdir -p app/src/main/res/drawable
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
+          rm -rf app/src/main/java/com/example/tvfloatingwidget
 
-          cat <<EOF > app/src/main/res/values/ids.xml
-          <?xml version="1.0" encoding="utf-8"?><resources><item type="id" name="hand_hour" /><item type="id" name="hand_minute" /><item type="id" name="hand_second" /><item type="id" name="controls_ribbon" /></resources>
-          EOF
-
-          cat <<EOF > app/src/main/res/layout/activity_main.xml
-          <?xml version="1.0" encoding="utf-8"?>
-          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent" android:layout_height="match_parent"
-              android:orientation="vertical" android:gravity="center" android:background="#121212">
-              <Button android:id="@+id/btnStart" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:text="ACTIVATE TV CLOCK" android:padding="20dp" android:backgroundTint="#00E5FF" android:textColor="#000000" />
-          </LinearLayout>
-          EOF
-
-          # Inject the Vector Assets you provided
+          # 2. INJECTING ALL XML ASSETS
           cat <<EOF > app/src/main/res/drawable/hand_hour.xml
           <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="120dp" android:height="120dp" android:viewportWidth="120" android:viewportHeight="120"><path android:fillColor="#00E5FF" android:pathData="M58,35h4v25h-4z" /></vector>
           EOF
@@ -76,7 +51,25 @@ jobs:
           <ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="#40FFFFFF"><item><shape><solid android:color="#15FFFFFF" /><corners android:radius="18dp" /></shape></item></ripple>
           EOF
 
-          # 4. FULL MANIFEST OVERWRITE (Fixes SAXParseException)
+          # 3. LAYOUT INJECTION (Fixes crashing from missing UI)
+          cat <<EOF > app/src/main/res/layout/activity_main.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center" android:background="#121212">
+              <Button android:id="@+id/btnStart" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="START CLOCK" android:backgroundTint="#00E5FF" android:textColor="#000000" />
+          </LinearLayout>
+          EOF
+
+          cat <<EOF > app/src/main/res/layout/widget_layout.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/artistic_glass_panel">
+              <ImageView android:layout_width="150dp" android:layout_height="150dp" android:src="@drawable/analog_clock_frame" />
+              <ImageView android:id="@+id/hand_hour" android:layout_width="150dp" android:layout_height="150dp" android:src="@drawable/hand_hour" />
+              <ImageView android:id="@+id/hand_minute" android:layout_width="150dp" android:layout_height="150dp" android:src="@drawable/hand_minute" />
+              <ImageView android:id="@+id/hand_second" android:layout_width="150dp" android:layout_height="150dp" android:src="@drawable/hand_second" />
+          </FrameLayout>
+          EOF
+
+          # 4. MANIFEST OVERWRITE (The Safety Net)
           cat <<EOF > app/src/main/AndroidManifest.xml
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.tvosmaster">
@@ -84,46 +77,102 @@ jobs:
               <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
               <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
               <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-              <application android:allowBackup="true" android:label="TV Master Clock" android:theme="@style/Theme.AppCompat.NoActionBar">
+              <application android:label="TV Master Clock" android:theme="@style/Theme.AppCompat.NoActionBar">
                   <activity android:name=".MainActivity" android:exported="true">
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN" />
-                          <category android:name="android.intent.category.LAUNCHER" />
-                      </intent-filter>
+                      <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
                   </activity>
-                  <service android:name=".FloatingWidgetService" android:enabled="true" android:exported="false" android:foregroundServiceType="specialUse" />
+                  <service android:name=".FloatingWidgetService" android:foregroundServiceType="specialUse" android:exported="false" />
               </application>
           </manifest>
           EOF
 
-          # 5. CODE INJECTION (Anti-Freeze)
+          # 5. KOTLIN CODE INJECTION (Anti-Crash Logic)
           cat <<EOF > app/src/main/java/com/example/tvosmaster/MainActivity.kt
           package com.example.tvosmaster
-          import android.os.Bundle
+          import android.os.*
           import android.content.Intent
           import android.provider.Settings
           import android.widget.Button
           import androidx.appcompat.app.AppCompatActivity
           import androidx.core.app.ActivityCompat
           import android.Manifest
-          import android.os.Build
 
           class MainActivity : AppCompatActivity() {
               override fun onCreate(savedInstanceState: Bundle?) {
                   super.onCreate(savedInstanceState)
                   setContentView(R.layout.activity_main)
-                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                      ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
-                  }
+                  if (Build.VERSION.SDK_INT >= 33) ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
                   findViewById<Button>(R.id.btnStart).setOnClickListener {
                       if (!Settings.canDrawOverlays(this)) {
                           startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
                       } else {
                           val intent = Intent(this, FloatingWidgetService::class.java)
-                          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { startForegroundService(intent) }
-                          else { startService(intent) }
+                          if (Build.VERSION.SDK_INT >= 26) startForegroundService(intent) else startService(intent)
                       }
                   }
+              }
+          }
+          EOF
+
+          cat <<EOF > app/src/main/java/com/example/tvosmaster/FloatingWidgetService.kt
+          package com.example.tvosmaster
+          import android.app.*
+          import android.content.*
+          import android.graphics.PixelFormat
+          import android.os.*
+          import android.view.*
+          import android.widget.ImageView
+          import androidx.core.app.NotificationCompat
+          import java.util.*
+
+          class FloatingWidgetService : Service() {
+              private lateinit var windowManager: WindowManager
+              private lateinit var floatingView: View
+
+              override fun onBind(intent: Intent?): IBinder? = null
+
+              override fun onCreate() {
+                  super.onCreate()
+                  createNotificationChannel()
+                  val notification = NotificationCompat.Builder(this, "clock_channel")
+                      .setContentTitle("TV Clock Active").setSmallIcon(android.R.drawable.ic_lock_idle_alarm).build()
+                  startForeground(1, notification)
+
+                  windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+                  floatingView = LayoutInflater.from(this).inflate(R.layout.widget_layout, null)
+
+                  val params = WindowManager.LayoutParams(
+                      WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
+                      if (Build.VERSION.SDK_INT >= 26) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE,
+                      WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT
+                  )
+                  windowManager.addView(floatingView, params)
+                  startClock()
+              }
+
+              private fun startClock() {
+                  val handler = Handler(Looper.getMainLooper())
+                  handler.post(object : Runnable {
+                      override fun run() {
+                          val calendar = Calendar.getInstance()
+                          floatingView.findViewById<ImageView>(R.id.hand_hour).rotation = (calendar.get(Calendar.HOUR) * 30 + calendar.get(Calendar.MINUTE) / 2).toFloat()
+                          floatingView.findViewById<ImageView>(R.id.hand_minute).rotation = (calendar.get(Calendar.MINUTE) * 6).toFloat()
+                          floatingView.findViewById<ImageView>(R.id.hand_second).rotation = (calendar.get(Calendar.SECOND) * 6).toFloat()
+                          handler.postDelayed(this, 1000)
+                      }
+                  })
+              }
+
+              private fun createNotificationChannel() {
+                  if (Build.VERSION.SDK_INT >= 26) {
+                      val channel = NotificationChannel("clock_channel", "Clock Service", NotificationManager.IMPORTANCE_LOW)
+                      (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
+                  }
+              }
+
+              override fun onDestroy() {
+                  super.onDestroy()
+                  if (::floatingView.isInitialized) windowManager.removeView(floatingView)
               }
           }
           EOF
@@ -136,5 +185,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: TV-Clock-Final-Fix-APK
+          name: Final-TV-Master-Clock
           path: app/build/outputs/apk/debug/*.apk
