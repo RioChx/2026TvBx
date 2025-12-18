@@ -2,17 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:background="#050505" android:padding="32dp">
-    <ImageButton android:id="@+id/btn_close_app" android:layout_width="64dp" android:layout_height="64dp"
-        android:layout_alignParentTop="true" android:layout_alignParentEnd="true"
-        android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:tint="#40FFFFFF" />
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:layout_centerInParent="true" android:orientation="vertical" android:gravity="center"
-        android:background="@drawable/dashboard_card" android:padding="80dp">
+        android:layout_centerInParent="true" android:orientation="vertical" android:gravity="center">
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="TV OS MASTER" android:textColor="#FFFFFF" android:textSize="42sp" android:textStyle="bold" />
         <Button android:id="@+id/btn_launch" android:layout_width="340dp" android:layout_height="80dp"
-            android:text="INITIALIZE HUD" android:layout_marginTop="72dp" android:background="@drawable/button_bg"
+            android:text="INITIALIZE HUD" android:layout_marginTop="72dp"
             android:textColor="#000000" android:textStyle="bold" android:textSize="18sp" />
     </LinearLayout>
 </RelativeLayout>
